@@ -1,6 +1,6 @@
 {
   "name": "grapesjs-ruler",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "GrapesJS plugin: Photoshop-like rulers around the canvas, a crosshair that follows the cursor (also over the empty area around tablet/mobile frames) and draggable guides.",
   "type": "module",
   "main": "./dist/grapesjs-ruler.umd.cjs",

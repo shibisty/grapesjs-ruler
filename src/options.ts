@@ -1,3 +1,5 @@
+import type { PluginMeta } from './contract';
+
 export type CrosshairMode = 'full' | 'cursor' | false;
 
 export interface RulerLabels {
@@ -84,7 +86,7 @@ export function resolveOptions(o: RulerOptions = {}): ResolvedOptions {
         : { panel: (o.button && o.button.panel) || 'options', id: (o.button && o.button.id) || 'gjs-ruler' },
     keymap: typeof o.keymap === 'string' && o.keymap.trim() ? o.keymap : false,
     storageKey: o.storageKey === false ? false : typeof o.storageKey === 'string' && o.storageKey ? o.storageKey : 'gjs-ruler',
-    labels: o.labels || {},
+    labels: { ...(o.labels || {}) },
   };
 }
 
@@ -127,4 +129,57 @@ export function saveState(key: string | false, s: RulerState): void {
   } catch {
     // storage full / disabled
   }
+}
+
+export const PLUGIN_ID = 'grapesjs-ruler';
+/** Version of this package (a test checks it against package.json). */
+export const VERSION = '0.3.0';
+
+/** Options for forms (plugin contract). Crosshair, badge, distances and texts apply live. */
+export const META: PluginMeta = {
+  id: PLUGIN_ID,
+  version: VERSION,
+  title: 'Ruler',
+  description: 'Rulers around the canvas, crosshair, draggable guides.',
+  options: [
+    {
+      key: 'crosshair',
+      type: 'select',
+      default: 'full',
+      title: 'Crosshair',
+      choices: [
+        { value: 'full', label: 'Across the canvas' },
+        { value: 'cursor', label: 'From the ruler to the cursor' },
+        { value: false, label: 'Off' },
+      ],
+      live: true,
+    },
+    { key: 'cursorLabel', type: 'boolean', default: true, title: 'Coordinates next to the cursor', live: true },
+    { key: 'distances', type: 'boolean', default: true, title: 'Distances while dragging a guide', live: true },
+    { key: 'guides', type: 'boolean', default: true, title: 'Guides' },
+    { key: 'visible', type: 'boolean', default: true, title: 'Shown on first start', description: 'Later the last state is restored.' },
+    { key: 'grid', type: 'boolean', default: true, title: 'Grid around the frame', description: 'Initial state; the corner square toggles it.' },
+    { key: 'size', type: 'number', default: 20, title: 'Ruler thickness, px', description: '12–48.' },
+    { key: 'keymap', type: 'string', default: '', title: 'Shortcut', description: "e.g. '⌘+shift+r, ctrl+shift+r'; empty — none." },
+    { key: 'button', type: 'json', default: { panel: 'options', id: 'gjs-ruler' }, title: 'Toolbar button', description: '{ "panel": "options", "id": "gjs-ruler" }, or false.', advanced: true },
+    { key: 'storageKey', type: 'string', default: 'gjs-ruler', title: 'localStorage key', description: 'Empty — keep nothing.', advanced: true },
+    { key: 'labels', type: 'json', default: {}, title: 'Texts', live: true, advanced: true },
+  ],
+};
+
+/** The options a form can show. */
+export function publicOptions(o: ResolvedOptions): Record<string, unknown> {
+  return {
+    crosshair: o.crosshair,
+    cursorLabel: o.cursorLabel,
+    distances: o.distances,
+    guides: o.guides,
+    visible: o.visible,
+    grid: o.grid,
+    size: o.size,
+    keymap: o.keymap || '',
+    button: o.button ? { ...o.button } : false,
+    storageKey: o.storageKey || '',
+    labels: { ...o.labels },
+  };
 }

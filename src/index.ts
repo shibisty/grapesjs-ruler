@@ -1,6 +1,7 @@
 import type { Editor } from 'grapesjs';
 import { getLabels, registerMessages } from './i18n';
-import { loadState, resolveOptions, saveState, type RulerOptions, type RulerState } from './options';
+import { META, VERSION, loadState, publicOptions, resolveOptions, saveState, type RulerOptions, type RulerState } from './options';
+import { assignOptions, definePlugin, registerControl } from './contract';
 import { createRuler, type GuideAxis, type Guides, type RulerController } from './ruler';
 import type { Geometry } from './scale';
 import { ICON, injectStyles } from './styles';
@@ -9,6 +10,7 @@ export type { RulerOptions, RulerLabels, CrosshairMode, RulerButtonOptions } fro
 export type { Guides, GuideAxis, RulerController } from './ruler';
 export type { Geometry } from './scale';
 export { pickStep, ticks, toDoc, toScreen } from './scale';
+export { META, VERSION };
 
 /** Stateful command: running it shows the rulers, stopping hides them. */
 export const CMD_SHOW = 'ruler:show';
@@ -51,8 +53,13 @@ declare module 'grapesjs' {
   }
 }
 
-export default function grapesjsRuler(editor: Editor, options: RulerOptions = {}): void {
+function grapesjsRuler(editor: Editor, options: RulerOptions = {}): void {
   const opts = resolveOptions(options);
+  const offControl = registerControl(editor, META, () => publicOptions(opts), (patch) => {
+    if ('crosshair' in patch) patch.crosshair = patch.crosshair === 'cursor' ? 'cursor' : patch.crosshair === false ? false : 'full';
+    assignOptions(opts as unknown as Record<string, unknown>, patch);
+    ctrl?.refresh();
+  });
   const state: RulerState = loadState(opts.storageKey, opts.visible, opts.grid);
   registerMessages(editor);
   const labels = () => getLabels(editor, opts.labels);
@@ -185,6 +192,7 @@ export default function grapesjsRuler(editor: Editor, options: RulerOptions = {}
   editor.onReady(start);
 
   editor.on('destroy', () => {
+    offControl();
     ctrl?.destroy();
     ctrl = null;
     editor.off('i18n:locale i18n:update', updateButtonTitle);
@@ -216,3 +224,8 @@ export default function grapesjsRuler(editor: Editor, options: RulerOptions = {}
   };
   (editor as any).Ruler = api;
 }
+
+definePlugin(grapesjsRuler, META);
+
+export { grapesjsRuler };
+export default grapesjsRuler;

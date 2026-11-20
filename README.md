@@ -95,6 +95,20 @@ npm run typecheck
 npm run build     # dist/: ES + UMD + .d.ts
 ```
 
+
+## Using it by name and changing options in the editor
+
+This plugin follows the plugin contract of grapesjs-plugins-manager (its `docs/plugin-contract.md`): with the UMD bundle on the page it registers itself as `grapesjs-ruler`, so it can be listed like an official plugin —
+
+```js
+grapesjs.init({
+  plugins: ['grapesjs-ruler'],
+  pluginsOpts: { 'grapesjs-ruler': { crosshair: 'cursor' } },
+});
+```
+
+— and grapesjs-plugins-manager shows a form of its options (⚙ in the plugin list); `crosshair`, `cursorLabel`, `distances` and `labels` change without a reload. The plugin function carries `meta` (id, version, option schema).
+
 ## License
 
 MIT
