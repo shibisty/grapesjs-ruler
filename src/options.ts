@@ -133,7 +133,7 @@ export function saveState(key: string | false, s: RulerState): void {
 
 export const PLUGIN_ID = 'grapesjs-ruler';
 /** Version of this package (a test checks it against package.json). */
-export const VERSION = '0.3.0';
+export const VERSION = '0.3.1';
 
 /** Options for forms (plugin contract). Crosshair, badge, distances and texts apply live. */
 export const META: PluginMeta = {

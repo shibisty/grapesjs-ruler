@@ -1,11 +1,13 @@
 {
   "name": "grapesjs-ruler",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "GrapesJS plugin: Photoshop-like rulers around the canvas, a crosshair that follows the cursor (also over the empty area around tablet/mobile frames) and draggable guides.",
   "type": "module",
   "main": "./dist/grapesjs-ruler.umd.cjs",
   "module": "./dist/grapesjs-ruler.js",
   "types": "./dist/index.d.ts",
+  "unpkg": "./dist/grapesjs-ruler.umd.js",
+  "jsdelivr": "./dist/grapesjs-ruler.umd.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -17,7 +19,7 @@
   "sideEffects": false,
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc -p tsconfig.json --emitDeclarationOnly",
+    "build": "vite build && tsc -p tsconfig.json --emitDeclarationOnly && node -e \"require('fs').copyFileSync('dist/grapesjs-ruler.umd.cjs','dist/grapesjs-ruler.umd.js')\"",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
     "test": "vitest run",
     "test:watch": "vitest",
